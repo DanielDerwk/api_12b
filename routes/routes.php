@@ -32,6 +32,7 @@ else{
             }
             $user -> index();
             break;
+            
         case 'login':
             if(isset($_POST) && $method == 'POST'){
                 $user = new LoginController($method, $_POST);
@@ -45,6 +46,15 @@ else{
                 return;
             }
             break;
+        case 'products':
+            if(isset($_POST)){
+                $products = new ProductController($method, $complement, $_POST);
+            }else{
+                $products = new ProductController($method, $complement, 0);
+            }
+            $products -> index();
+            break;
+
         default:
             $json = array(
                 "ruta:"=>"not found"
