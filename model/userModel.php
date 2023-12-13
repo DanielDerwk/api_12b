@@ -7,11 +7,12 @@ class UserModel{
         if($cantMail == 0){
             $query = "INSERT INTO users(use_id, use_mail, use_pss, use_dateCreate, us_identifier, us_key, us_status) 
             VALUES (NULL, :use_mail, :use_pss, :use_dateCreate, :us_identifier, :us_key, :us_status)";
-            $status="0";
+            $status="1";
+            $date = date("Y-m-d");
             $stament = Conection::connection()->prepare($query);
             $stament->bindParam(":use_mail", $data["use_mail"], PDO::PARAM_STR);
             $stament->bindParam(":use_pss", $data["use_pss"], PDO::PARAM_STR);
-            $stament->bindParam(":use_dateCreate", $data["use_dateCreate"], PDO::PARAM_STR);
+            $stament->bindParam(":use_dateCreate", $date, PDO::PARAM_STR);
             $stament->bindParam(":us_identifier", $data["us_identifier"], PDO::PARAM_STR);
             $stament->bindParam(":us_key", $data["us_key"], PDO::PARAM_STR);
             $stament->bindParam(":us_status", $status, PDO::PARAM_INT);

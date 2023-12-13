@@ -23,6 +23,7 @@ else{
     $method = $_SERVER['REQUEST_METHOD'];
 
     switch ($endPoint) {
+
         case 'users':
             if(isset($_POST)){
                 $user = new UserController($method, $complement, $_POST);
@@ -47,12 +48,17 @@ else{
             }
             break;
         case 'products':
-            if(isset($_POST)){
-                $products = new ProductController($method, $complement, $_POST);
-            }else{
-                $products = new ProductController($method, $complement, 0);
+            if($method == 'POST' || $method == 'GET' || $method == 'PUT' || $method == 'DELETE'){
+                $user = new ProductController($method, $complement, $_POST);
+                $user -> index();
             }
-            $products -> index();
+            else{
+                $json = array(
+                    "ruta:"=>"not found"
+                );
+                echo json_encode($json, true);
+                return;
+            }
             break;
 
         default:

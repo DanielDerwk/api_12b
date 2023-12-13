@@ -27,10 +27,8 @@ class UserController{
                 }
             case "POST":
                 $createUser = UserModel::createUser($this->generateSalting());
-                $json = array(
-                    "response" => $createUser
-                );
-                echo json_encode($json, true);
+                $json = $createUser;
+                echo json_encode($json, JSON_UNESCAPED_UNICODE);
                 return;
             case "PUT":
                 $updateUser = UserModel::updateUser($this->generateSalting());

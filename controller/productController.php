@@ -13,18 +13,12 @@ class ProductController{
     public function index(){
         switch($this->_method){
             case "GET":
-                if($this->_complement == 0){
-                    $product = ProductModel::getProduct(0);
-                    $json = $product;
-                    echo json_encode($json, true);
+                    header('Content-Type: application/json');
+                    $getProduct = ProductModel::getProduct();
+                    $result = $getProduct;
+                    header('Content-Type: application/json');
+                    echo json_encode($result,JSON_UNESCAPED_UNICODE);
                     return;
-                }
-                else{
-                    $product = ProductModel::getProduct($this->_complement);
-                    $json = $product;
-                    echo json_encode($json, true);
-                    return;
-                }
             case "POST":
                 $createProduct = ProductModel::createProduct($this->generateSalting());
                 $json = array(

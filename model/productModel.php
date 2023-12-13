@@ -5,13 +5,14 @@ class ProductModel{
     static public function createProduct($data){
         $cantName = self::getName($data["product_name"]);
         if($cantName == 0){
-            $query = "INSERT INTO products(product_id, product_name, product_unit, product_value, prod_identifier, prod_key, prod_status) 
-            VALUES (NULL, :product_name, :product_unit, :product_value, :prod_identifier, :prod_key, :prod_status)";
+            $query = "INSERT INTO products(product_id, product_name, product_unit, product_value, product_image, prod_identifier, prod_key, prod_status) 
+            VALUES (NULL, :product_name, :product_unit, :product_value, :product_image, :prod_identifier, :prod_key, :prod_status)";
             $status="0";
             $stament = Conection::connection()->prepare($query);
             $stament->bindParam(":product_name", $data["product_name"], PDO::PARAM_STR);
             $stament->bindParam(":product_unit", $data["product_unit"], PDO::PARAM_INT);
             $stament->bindParam(":product_value", $data["product_value"], PDO::PARAM_INT);
+            $stament->bindParam(":product_image", $data["product_image"], PDO::PARAM_STR);
             $stament->bindParam(":prod_identifier", $data["prod_identifier"], PDO::PARAM_STR);
             $stament->bindParam(":prod_key", $data["prod_key"], PDO::PARAM_STR);
             $stament->bindParam(":prod_status", $status, PDO::PARAM_INT);
@@ -35,24 +36,34 @@ class ProductModel{
         return $result;
     }
     //Traer todos los usuarios o uno en especifico
-    static function getProduct($id){
-        $query = "";
-        $id = is_numeric($id) ? $id : 0;
-        $query = "SELECT product_id, product_name, product_unit, product_value FROM products";
-        $query.=($id > 0) ? " WHERE products.product_id = '$id' AND " : "";
-        $query.=($id > 0) ? " prod_status='1';" : " WHERE prod_status = '1';"; 
+    static public function getProduct(){
+        $query = "SELECT product_id, product_name, product_unit, product_value, product_image FROM products";
+        //echo $query;
         $stament = Conection::connection()->prepare($query);
         $stament->execute();
         $result = $stament->fetchAll(PDO::FETCH_ASSOC);
+
+        // Convertir el resultado a un array de objetos
+        $result = array_map(function($producto){
+            return [
+                'product_id' => $producto['product_id'],
+                'product_name' => $producto['product_name'],
+                'product_unit' => $producto['product_unit'],
+                'product_value' => $producto['product_value'],
+                'product_image' => $producto['product_image'],
+            ];
+        }, $result);
+
         return $result;
     }
     //Actualizar producto
     static public function updateProduct($data){
         $query = "";
-        $query = "UPDATE products SET product_name = :product_name, product_value = :product_value, product_unit = :product_unit WHERE product_id = :product_id";
+        $query = "UPDATE products SET product_name = :product_name, product_value = :product_value, product_unit = :product_unit, product_image = :product_image WHERE product_id = :product_id";
         $stament = Conection::connection()->prepare($query);
         $stament->bindParam(":product_name", $data["product_name"], PDO::PARAM_STR);
         $stament->bindParam(":product_value", $data["product_value"], PDO::PARAM_STR);
+        $stament->bindParam(":product_image", $data["product_image"], PDO::PARAM_STR);
         $stament->bindParam(":product_unit", $data["product_unit"], PDO::PARAM_STR);
         $stament->bindParam(":product_id", $data["product_id"], PDO::PARAM_INT);
         $message = $stament->execute() ? "ok" : Conection::connection() ->errorInfo();
